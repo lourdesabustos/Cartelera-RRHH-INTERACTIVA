@@ -79,14 +79,14 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="relative h-screen w-screen bg-slate-950 overflow-hidden text-white font-sans">
+    <div className="relative h-dvh w-screen bg-slate-950 overflow-hidden text-white font-sans">
       <Layout branding={branding}>
         <div className="h-full flex flex-col relative">
           
           {!showAdmin && (
-            <div className="absolute top-0 left-0 w-full h-1.5 bg-white/5 z-50">
+            <div className="absolute top-0 left-0 w-full h-1 bg-white/5 z-50">
               <div 
-                className="h-full bg-blue-500 transition-all duration-100 ease-linear shadow-[0_0_15px_rgba(59,130,246,0.6)]"
+                className="h-full bg-blue-500 transition-all duration-100 ease-linear shadow-[0_0_10px_rgba(59,130,246,0.6)]"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -96,18 +96,19 @@ const App: React.FC = () => {
             <SlideRenderer slide={slides[currentIndex]} />
           </div>
 
-          <div className="absolute bottom-12 right-12 flex items-center gap-4 bg-black/60 backdrop-blur-xl p-3 rounded-2xl border border-white/10 opacity-0 hover:opacity-100 transition-all duration-500 z-50">
-            <button onClick={() => setShowAdmin(!showAdmin)} className="p-2 hover:bg-white/10 rounded-xl text-blue-400" title="Configuración">
-              <Settings size={22} className={showAdmin ? 'animate-spin' : ''} />
+          {/* Controles flotantes ajustados para móvil */}
+          <div className="absolute bottom-4 right-4 sm:bottom-12 sm:right-12 flex items-center gap-2 sm:gap-4 bg-black/60 backdrop-blur-xl p-2 sm:p-3 rounded-xl sm:rounded-2xl border border-white/10 opacity-0 hover:opacity-100 transition-all duration-500 z-50">
+            <button onClick={() => setShowAdmin(!showAdmin)} className="p-1.5 sm:p-2 hover:bg-white/10 rounded-lg text-blue-400">
+              <Settings size={18} className={showAdmin ? 'animate-spin' : ''} />
             </button>
-            <div className="w-px h-6 bg-white/20" />
-            <button onClick={prevSlide} className="p-2 hover:bg-white/10 rounded-xl"><ChevronLeft size={28} /></button>
-            <button onClick={() => setIsPaused(!isPaused)} className="p-3 bg-blue-600 hover:bg-blue-500 rounded-xl shadow-lg transition-transform active:scale-95">
-              {isPaused ? <Play size={28} fill="white" /> : <Pause size={28} fill="white" />}
+            <div className="w-px h-4 sm:h-6 bg-white/20" />
+            <button onClick={prevSlide} className="p-1.5 sm:p-2 hover:bg-white/10 rounded-lg"><ChevronLeft size={20} /></button>
+            <button onClick={() => setIsPaused(!isPaused)} className="p-2 sm:p-3 bg-blue-600 hover:bg-blue-500 rounded-lg shadow-lg">
+              {isPaused ? <Play size={20} fill="white" /> : <Pause size={20} fill="white" />}
             </button>
-            <button onClick={nextSlide} className="p-2 hover:bg-white/10 rounded-xl"><ChevronRight size={28} /></button>
-            <div className="w-px h-6 bg-white/20" />
-            <button onClick={toggleFullscreen} className="p-2 hover:bg-white/10 rounded-xl"><Maximize size={22} /></button>
+            <button onClick={nextSlide} className="p-1.5 sm:p-2 hover:bg-white/10 rounded-lg"><ChevronRight size={20} /></button>
+            <div className="hidden sm:block w-px h-6 bg-white/20" />
+            <button onClick={toggleFullscreen} className="hidden sm:block p-2 hover:bg-white/10 rounded-lg"><Maximize size={20} /></button>
           </div>
         </div>
       </Layout>
