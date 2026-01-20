@@ -33,10 +33,10 @@ export const Layout: React.FC<LayoutProps> = ({ children, branding }) => {
           </div>
         </div>
 
-        {/* Reloj pegado al borde superior */}
-        <div className="flex items-center gap-6 relative -top-5 md:-top-6">
+        {/* Reloj - Ajustado para estar más centrado verticalmente y no tan pegado al borde */}
+        <div className="flex items-center gap-6 relative top-0 md:top-0.5">
           <div className="text-right">
-            <div className="text-white text-xl md:text-2xl font-bold leading-none tracking-tighter">
+            <div className="text-white text-xl md:text-2xl font-bold font-mono leading-none tracking-tighter">
               {time.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', hour12: true }).toLowerCase()}
             </div>
             <div className="text-slate-500 text-[8px] font-black uppercase tracking-widest mt-0.5">
