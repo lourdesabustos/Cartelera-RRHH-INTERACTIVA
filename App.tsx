@@ -1,125 +1,96 @@
-
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { INITIAL_SLIDES, DEFAULT_BRANDING } from './constants';
-import { SlideData, Branding } from './types';
-import { Layout } from './components/Layout';
-import { SlideRenderer } from './components/SlideRenderer';
-import { AdminPanel } from './components/AdminPanel';
-import { Play, Pause, ChevronLeft, ChevronRight, Settings, Maximize } from 'lucide-react';
+import { INITIAL_SLIDES, DEFAULT_BRANDING } from './constants.tsx';
+import { SlideData, Branding } from './types.ts';
+import { Layout } from './components/Layout.tsx';
+import { SlideRenderer } from './components/SlideRenderer.tsx';
+import { AdminPanel } from './components/AdminPanel.tsx';
+import { Settings } from 'lucide-react';
 
 const App: React.FC = () => {
   const [slides, setSlides] = useState<SlideData[]>(() => {
-    const saved = localStorage.getItem('rrhh_slides');
-    return saved ? JSON.parse(saved) : INITIAL_SLIDES;
+    try {
+      const saved = localStorage.getItem('imerys_slides_v3');
+      return saved ? JSON.parse(saved) : INITIAL_SLIDES;
+    } catch {
+      return INITIAL_SLIDES;
+    }
   });
 
-  const [branding, setBranding] = useState<Branding>(() => {
-    const saved = localStorage.getItem('rrhh_branding');
-    return saved ? JSON.parse(saved) : DEFAULT_BRANDING;
-  });
-  
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
   const [showAdmin, setShowAdmin] = useState(false);
   const [progress, setProgress] = useState(0);
-  
-  const progressIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const progressIntervalRef = useRef<number | null>(null);
 
   useEffect(() => {
-    localStorage.setItem('rrhh_slides', JSON.stringify(slides));
+    localStorage.setItem('imerys_slides_v3', JSON.stringify(slides));
   }, [slides]);
-
-  useEffect(() => {
-    localStorage.setItem('rrhh_branding', JSON.stringify(branding));
-  }, [branding]);
 
   const nextSlide = useCallback(() => {
     setCurrentIndex((prev) => (prev + 1) % slides.length);
     setProgress(0);
   }, [slides.length]);
 
-  const prevSlide = useCallback(() => {
-    setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length);
-    setProgress(0);
-  }, [slides.length]);
-
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen();
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      }
-    }
-  };
-
   useEffect(() => {
-    if (isPaused || showAdmin || slides.length === 0) return;
+    if (showAdmin) {
+      if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
+      return;
+    }
 
-    const duration = (slides[currentIndex].duration || 15) * 1000;
+    const duration = (slides[currentIndex]?.duration || 15) * 1000;
     const stepTime = 100;
     const steps = duration / stepTime;
-    let currentStep = 0;
 
-    progressIntervalRef.current = setInterval(() => {
-      currentStep++;
-      setProgress((currentStep / steps) * 100);
-      if (currentStep >= steps) {
-        nextSlide();
-      }
+    progressIntervalRef.current = window.setInterval(() => {
+      setProgress((prev) => {
+        const next = prev + (100 / steps);
+        if (next >= 100) {
+          nextSlide();
+          return 0;
+        }
+        return next;
+      });
     }, stepTime);
 
     return () => {
       if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
     };
-  }, [currentIndex, isPaused, slides, nextSlide, showAdmin]);
+  }, [currentIndex, slides, nextSlide, showAdmin]);
 
-  const handleUpdateSlide = (updatedSlide: SlideData) => {
-    setSlides(prev => prev.map(s => s.id === updatedSlide.id ? updatedSlide : s));
-  };
+  const currentSlide = slides[currentIndex];
 
   return (
-    <div className="relative h-dvh w-screen bg-slate-950 overflow-hidden text-white font-sans">
-      <Layout branding={branding}>
-        <div className="h-full flex flex-col relative">
-          
+    <div className="h-screen w-screen bg-[#0a0f1e] overflow-hidden select-none cursor-none group hover:cursor-default">
+      <Layout branding={DEFAULT_BRANDING}>
+        <div className="h-full relative flex flex-col">
+          {/* Progress Bar Estilo Imagen (Justo bajo el header) */}
           {!showAdmin && (
-            <div className="absolute top-0 left-0 w-full h-1 bg-white/5 z-50">
+            <div className="absolute top-0 left-0 w-full h-1 bg-white/5 z-[110]">
               <div 
-                className="h-full bg-blue-500 transition-all duration-100 ease-linear shadow-[0_0_10px_rgba(59,130,246,0.6)]"
+                className="h-full bg-blue-600 shadow-[0_0_10px_rgba(37,99,235,0.8)] transition-all duration-100 ease-linear"
                 style={{ width: `${progress}%` }}
               />
             </div>
           )}
 
           <div className="flex-1 overflow-hidden">
-            <SlideRenderer slide={slides[currentIndex]} />
+            <SlideRenderer slide={currentSlide} />
           </div>
 
-          {/* Controles flotantes ajustados para móvil */}
-          <div className="absolute bottom-4 right-4 sm:bottom-12 sm:right-12 flex items-center gap-2 sm:gap-4 bg-black/60 backdrop-blur-xl p-2 sm:p-3 rounded-xl sm:rounded-2xl border border-white/10 opacity-0 hover:opacity-100 transition-all duration-500 z-50">
-            <button onClick={() => setShowAdmin(!showAdmin)} className="p-1.5 sm:p-2 hover:bg-white/10 rounded-lg text-blue-400">
-              <Settings size={18} className={showAdmin ? 'animate-spin' : ''} />
-            </button>
-            <div className="w-px h-4 sm:h-6 bg-white/20" />
-            <button onClick={prevSlide} className="p-1.5 sm:p-2 hover:bg-white/10 rounded-lg"><ChevronLeft size={20} /></button>
-            <button onClick={() => setIsPaused(!isPaused)} className="p-2 sm:p-3 bg-blue-600 hover:bg-blue-500 rounded-lg shadow-lg">
-              {isPaused ? <Play size={20} fill="white" /> : <Pause size={20} fill="white" />}
-            </button>
-            <button onClick={nextSlide} className="p-1.5 sm:p-2 hover:bg-white/10 rounded-lg"><ChevronRight size={20} /></button>
-            <div className="hidden sm:block w-px h-6 bg-white/20" />
-            <button onClick={toggleFullscreen} className="hidden sm:block p-2 hover:bg-white/10 rounded-lg"><Maximize size={20} /></button>
-          </div>
+          {/* Hidden controls */}
+          <button 
+            onClick={() => setShowAdmin(true)}
+            className="absolute bottom-20 left-10 p-4 bg-white/5 hover:bg-white/10 rounded-full border border-white/10 text-white opacity-0 group-hover:opacity-100 transition-opacity z-[150]"
+          >
+            <Settings size={20} />
+          </button>
         </div>
       </Layout>
 
       {showAdmin && (
         <AdminPanel 
           slides={slides} 
-          branding={branding}
-          onUpdateBranding={setBranding}
+          onUpdate={setSlides} 
           onClose={() => setShowAdmin(false)} 
-          onUpdate={handleUpdateSlide}
         />
       )}
     </div>

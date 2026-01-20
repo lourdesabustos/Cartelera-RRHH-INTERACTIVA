@@ -11,11 +11,7 @@ export enum SlideType {
 export interface Birthday {
   name: string;
   day: string;
-}
-
-export interface Branding {
-  companyName: string;
-  location: string;
+  month: number; // 1-12
 }
 
 export interface SlideData {
@@ -26,4 +22,9 @@ export interface SlideData {
   imageUrl?: string;
   footer?: string;
   duration?: number;
+}
+
+export interface Branding {
+  companyName: string;
+  location: string;
 }

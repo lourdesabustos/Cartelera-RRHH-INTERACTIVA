@@ -1,69 +1,48 @@
 
-import { SlideType, SlideData, Branding } from './types';
+import { SlideType, SlideData, Branding } from './types.ts';
 
 export const DEFAULT_BRANDING: Branding = {
   companyName: 'IMERYS',
-  location: 'Planta Operativa'
+  location: 'Planta Santiago'
 };
+
+const currentMonth = new Date().getMonth() + 1;
 
 export const INITIAL_SLIDES: SlideData[] = [
   {
     id: '1',
     type: SlideType.BUZON,
-    title: '¡Tu voz es nuestra fuerza!',
+    title: '¡Queremos escucharte!',
     content: {
-      body: 'Escanea el código para enviarnos tus dudas, sugerencias o reclamos. Tu participación es 100% confidencial y fundamental para mejorar nuestra planta.',
-      qrData: 'https://docs.google.com/forms/d/19WMOwuVyoh9a4VTOPTsgVMYVRvlriY5Q-VlMibms9UY/edit'
+      body: 'Escanea el código para enviarnos tus dudas, sugerencias o reclamos. Es 100% confidencial.',
+      qrData: 'https://docs.google.com/forms/d/e/1FAIpQLSfD_SugWuerR5-G4h0K_8XvU_U8rOqWv0NlA/viewform'
     },
-    footer: 'RRHH Imerys • Comunicación Directa',
+    footer: 'RRHH siempre conectado contigo.',
     duration: 20
-  },
-  {
-    id: '2',
-    type: SlideType.RESPONDE,
-    title: 'RRHH Responde',
-    content: {
-      question: '¿Cuándo entregan el calzado de seguridad?',
-      answer: 'Ya están en bodega, se entregan este jueves de 14:00 a 16:00 h.',
-      note: 'Recuerda que puedes consultar todos tus beneficios en la App Corporativa.'
-    },
-    footer: 'Transparencia en la gestión.',
-    duration: 12
   },
   {
     id: '3',
     type: SlideType.CUMPLEANOS,
-    title: 'Cumpleaños del Mes',
+    title: '¡Feliz Cumpleaños!',
     content: {
-      month: '', 
-      sheetUrl: '', 
       birthdays: [
-        { name: 'Ejemplo: Juan Pérez', day: '15/05' }
+        { name: 'Ejemplo Persona 1', day: '05', month: currentMonth },
+        { name: 'Ejemplo Persona 2', day: '12', month: currentMonth },
+        { name: 'Ejemplo Persona 3', day: '18', month: currentMonth + 1 > 12 ? 1 : currentMonth + 1 }
       ]
     },
-    footer: '¡Felicidades a todos los cumpleañeros!',
+    footer: '¡Un año más de éxito juntos!',
     duration: 15
   },
   {
     id: '4',
     type: SlideType.SEGURIDAD,
-    title: 'Seguridad Primero',
+    title: 'Tu seguridad es lo primero.',
     content: {
-      body: 'El uso de protectores auditivos es OBLIGATORIO en toda la zona de producción. ¡Cuida tus oídos!'
+      body: 'Recuerda usar tus protectores auditivos en la zona de molienda. ¡Cuidar tus oídos es cuidar tu futuro!'
     },
-    imageUrl: 'https://images.unsplash.com/photo-1516937622528-f479c16369b5?auto=format&fit=crop&q=80&w=1200',
-    footer: 'Compromiso con el Cero Accidente.',
-    duration: 12
-  },
-  {
-    id: '5',
-    type: SlideType.RECONOCIMIENTO,
-    title: 'Reconocimiento',
-    content: {
-      body: 'Felicitamos al equipo de Mantenimiento por su rápida respuesta en la contingencia del lunes pasado.'
-    },
-    imageUrl: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=1200',
-    footer: 'Valoramos tu compromiso.',
-    duration: 12
+    imageUrl: 'https://images.unsplash.com/photo-1590103144002-393f607185c7?auto=format&fit=crop&q=80&w=1200',
+    footer: 'Meta: Cero Accidentes.',
+    duration: 15
   }
 ];
